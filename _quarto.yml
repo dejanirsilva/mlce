@@ -6,6 +6,7 @@ project:
 
 website:
   title: "Machine Learning for Computational Economics"
+  site-url: https://dejanirsilva.github.io/mlce
   navbar:
     left:
       - href: index.qmd
