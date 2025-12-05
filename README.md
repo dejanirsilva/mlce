@@ -7,7 +7,7 @@ Instructor: **Dejanir Silva** (Purdue University)
 Institution: **EDHEC Business School**
 
 📘 **Course website:**  
-👉 https://dejanirsilva.github.io/mlce
+👉 [https://dejanirsilva.github.io/mlce](https://dejanirsilva.github.io/mlce)
 
 ---
 
