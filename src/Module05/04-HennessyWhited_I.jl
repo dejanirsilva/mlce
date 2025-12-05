@@ -71,7 +71,7 @@ end
 #########################################################
 ### Training
 
-m                    = HennessyWhited(σz = 0.0, θ = 0.0, z̅ = -1.0, λ = 1.0)                            
+m                    = HennessyWhited(σz = 0.0, θ = 0.0, z̅ = -1.0, λ = 0.0)                            
 rng                  = Xoshiro(1234)
 θᵥ, stᵥ              = Lux.setup(rng, v_core) |> Lux.f64
 optᵥ                 = Optimisers.Adam(1e-3)
@@ -84,7 +84,8 @@ d_z                  = Normal(m.z̅, 0.17)
 
 p = Progress(max_iter; desc = "Training...", dt = 1.0)
 loss_history = Float64[]
-for it in 1:max_iter
+it = 0
+while it <= max_iter
     s_batch = vcat(rand(rng, dk, 150)', rand(rng, d_z, 150)')
     lossᵥ = zero(Float64)
     
@@ -97,6 +98,7 @@ for it in 1:max_iter
     if lossᵥ < 5e-6
         break
     end
+    it += 1
 end
 
 Δz_range = [log(0.87), log(1.0),log(1.15)]

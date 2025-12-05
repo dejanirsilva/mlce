@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-US">
+  <info>
+    <title>American Economic Review (Author-Year)</title>
+    <title-short>AER</title-short>
+    <id>http://www.zotero.org/styles/american-economic-review</id>
+    <link href="http://www.zotero.org/styles/american-economic-review" rel="self"/>
+    <link href="http://www.aeaweb.org/aer/styleguide.php" rel="documentation"/>
+    <author>
+      <name>Simon Kornblith</name>
+      <email>simon@simonster.com</email>
+    </author>
+    <contributor>
+      <name>Sebastian Karcher</name>
+    </contributor>
+    <category citation-format="author-date"/>
+    <category field="economics"/>
+    <summary>American Economic Review author-date citation style</summary>
+    <updated>2012-09-30T20:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  <locale xml:lang="en">
+    <terms>
+      <term name="edition" form="short">ed</term>
+      <term name="translator">trans</term>
+      <term name="editor">ed</term>
+      <term name="editors">eds</term>
+      <term name="volume">vol</term>
+      <term name="volumes">vols</term>
+    </terms>
+  </locale>
+  <macro name="author">
+    <names variable="author">
+      <name form="short" name-as-sort-order="all" sort-separator=", " delimiter=", " delimiter-precedes-last="always"/>
+      <substitute>
+        <names variable="editor"/>
+        <names variable="translator"/>
+        <text term="anonymous"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="editor">
+    <names variable="editor translator">
+      <name form="short" name-as-sort-order="all" sort-separator=", " delimiter=", " delimiter-precedes-last="always"/>
+    </names>
+  </macro>
+  <macro name="title">
+    <text variable="title"/>
+  </macro>
+  <macro name="date">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+  <macro name="access">
+    <choose>
+      <if variable="URL">
+        <text value=" "/>
+        <text term="retrieved" text-case="lowercase"/>
+        <text value=" "/>
+        <date variable="accessed">
+          <date-part name="month" form="numeric-leading-zeros"/>
+          <text value="/"/>
+          <date-part name="day" form="numeric-leading-zeros"/>
+          <text value="/"/>
+          <date-part name="year"/>
+        </date>
+        <text value=", from "/>
+        <text variable="URL"/>
+      </if>
+    </choose>
+  </macro>
+  <citation et-al-min="6" et-al-use-first="5" et-al-subsequent-min="6" et-al-subsequent-use-first="5" disambiguate-add-year-suffix="true" disambiguate-add-names="true" disambiguate-add-givenname="true">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout delimiter="; ">
+      <text macro="author" suffix=" "/>
+      <text macro="date" prefix="(" suffix=")"/>
+    </layout>
+  </citation>
+  <bibliography et-al-min="6" et-al-use-first="5" line-spacing="2" entry-spacing="0" second-field-align="flush">
+    <sort>
+      <key variable="author"/>
+      <key variable="issued"/>
+    </sort>
+    <layout>
+      <text macro="author" suffix=". "/>
+      <text macro="date" prefix="(" suffix="). "/>
+      <text macro="title" suffix=". "/>
+      <group delimiter=". ">
+        <text variable="container-title" font-style="italic"/>
+        <text variable="volume"/>
+        <text variable="issue" prefix="(" suffix=")"/>
+        <text variable="page" prefix=":"/>
+      </group>
+      <text macro="access"/>
+    </layout>
+  </bibliography>
+</style>
+

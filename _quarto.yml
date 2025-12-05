@@ -1,0 +1,69 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "!tests/**"
+
+website:
+  title: "Machine Learning for Computational Economics"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: syllabusEDHEC.pdf
+        text: "Syllabus"
+      - href: Lecture_Notes_MLCE.pdf
+        text: "Lecture Notes"
+      - text: "Slides"
+        menu:
+          - href: Module01/Module01_Slides.html
+            text: "Module 1 – Introduction"
+          - href: Module02/Module02_Slides.html
+            text: "Module 2 – Discrete-Time Methods"
+          - href: Module03/Module03_Slides.html
+            text: "Module 3 – Continuous-Time Methods"
+          - href: Module04/Module04_Slides.html
+            text: "Module 4 – Fundamentals of Machine Learning"
+          - href: Module05/Module05_Slides.html
+            text: "Module 5 – The Deep Policy Iteration Method"
+      - text: "Notebooks"
+        menu:
+          - href: notebooks/NB_ThreeChallenges.html
+            text: "Module 2 – Three Challenges"
+          - href: notebooks/NB_BlackScholes.html
+            text: "Module 3 – Black-Scholes"
+          - href: notebooks/NB_FittingDNN.html
+            text: "Module 4 – Fitting DNN"
+          - href: notebooks/NB_TwoTrees.html
+            text: "Module 5 – Two Trees"
+
+  sidebar:
+    style: floating
+    contents:
+      - index.qmd
+      - href: syllabusEDHEC.pdf
+        text: "Syllabus"
+      - href: Lecture_Notes_MLCE.pdf
+        text: "Lecture Notes"
+      - text: "Slides"
+        contents:
+          - href: Module01/Module01_Slides.html
+            text: "Module 1 – Introduction"
+          - href: Module02/Module02_Slides.html
+            text: "Module 2 – Discrete-Time Methods"
+          - href: Module03/Module03_Slides.html
+            text: "Module 3 – Continuous-Time Methods"
+          - href: Module04/Module04_Slides.html
+            text: "Module 4 – Fundamentals of Machine Learning"
+          - href: Module05/Module05_Slides.html
+            text: "Module 5 – The Deep Policy Iteration Method"
+      - text: "Notebooks"
+        contents:
+          - href: notebooks/NB_ThreeChallenges.html
+            text: "Module 2 – Three Challenges"
+          - href: notebooks/NB_BlackScholes.html
+            text: "Module 3 – Black-Scholes"
+          - href: notebooks/NB_FittingDNN.html
+            text: "Module 4 – Fitting DNN"
+          - href: notebooks/NB_TwoTrees.html
+            text: "Module 5 – Two Trees"

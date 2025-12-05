@@ -1,0 +1,839 @@
+/*-- scss:defaults --*/
+
+// Global colors
+$primary-bg: #ffffff;      // white background (matching simple theme)
+$primary-accent: #f2c14e;  // accent (e.g. for rules, small details)
+$text-color: #222222;      // standard text color
+$title-color: #0072b2;     // RGB(0,114,178) - blue for titles
+$module-color: #d55e00;    // RGB(213,94,0) - orange for module name
+$green-color: #009e73;     // RGB(0,158,115) - green for highlight
+
+// Math font size defaults
+$math-font-size-normal: 1em;
+$math-font-size-small: 0.75em;
+
+/*-- scss:rules --*/
+
+/* ============================================================
+   TITLE SLIDE
+   (KEEPING YOUR ORIGINAL BEHAVIOR)
+   ============================================================ */
+
+// Title slide - force flush left aligned
+.reveal #title-slide,
+.reveal #title-slide.center,
+.reveal .quarto-title-block.center {
+  text-align: left !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-left: 0 !important;
+}
+
+// Main title
+.reveal #title-slide h1.title {
+  font-size: 2.6rem;
+  font-weight: 900 !important;  // Extra bold
+  margin-bottom: 0.8rem;
+  color: $title-color !important;
+}
+
+// Subtitle (Module 01: Introduction + school name)
+.reveal #title-slide p.subtitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+// Module name with orange color
+.reveal #title-slide p.subtitle .module-name {
+  color: $module-color;
+}
+
+// School name smaller
+.reveal #title-slide p.subtitle .school-name {
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+// Author line - flush left aligned
+.reveal #title-slide .quarto-title-author-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+// Institute
+.reveal #title-slide .quarto-title-affiliation {
+  font-size: 1.3rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+// Author block layout
+.reveal #title-slide .quarto-title-authors {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+// Force all elements on title slide to flush left
+.reveal #title-slide * {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+}
+
+.reveal #title-slide .quarto-title-author,
+.reveal #title-slide .quarto-title-author-name,
+.reveal #title-slide .quarto-title-affiliation {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+// Override "center" classes that Quarto/Reveal might add
+.reveal .slides section#title-slide.quarto-title-block.center,
+.reveal section#title-slide.center {
+  text-align: left !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+// Nuclear option – keep title slide left-aligned even if centered by theme
+.reveal section#title-slide.quarto-title-block.center * {
+  text-align: left !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+// Date
+.reveal #title-slide .date {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+// Accent line under the title
+.reveal #title-slide h1.title::after {
+  content: "";
+  display: block;
+  width: 4rem;
+  height: 0.18rem;
+  background-color: $title-color;
+  margin-top: 0.6rem;
+}
+
+// Logo on all slides (if used)
+.reveal .reveal-logo {
+  top: 1.2rem;
+  right: 1.5rem;
+  width: 80px;
+  height: auto;
+  opacity: 0.95;
+}
+
+/* ============================================================
+   MAIN CONTENT SLIDES
+   ============================================================ */
+
+// Base font size for all non-title slides
+.reveal .slides section:not(#title-slide) {
+  font-size: 32px;
+}
+
+// Section headers (e.g., # Part I ...)
+.reveal .slides section:not(#title-slide) h1 {
+  font-size: 48px !important;
+  color: $title-color !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.75em !important;
+}
+
+// Smaller headers on non-title slides
+// (this is the key change vs your original: 52px → 40px and scoped)
+.reveal .slides section:not(#title-slide) h2 {
+  font-size: 40px !important;  // adjust here if you want smaller/larger
+  color: $title-color !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.8em !important;
+  text-transform: none !important;
+}
+
+// Optional: h3 hierarchy on non-title slides
+.reveal .slides section:not(#title-slide) h3 {
+  font-size: 30px !important;
+  color: $title-color !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.6em !important;
+}
+
+// Fragment highlighting
+// Only apply when visible (standard Reveal behavior) to allow transitions
+.reveal .fragment.highlight-green.visible {
+  color: $green-color !important;
+  font-weight: 700 !important;
+}
+
+// Ensure it starts visible (like a standard fade-out fragment)
+.reveal .fragment.fade-out-green {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+// Custom fragment to REMOVE green highlighting
+.reveal .fragment.fade-out-green.visible {
+  color: $text-color !important;
+  font-weight: normal !important;
+  opacity: 1 !important;
+}
+
+// Utility class for orange text (module color)
+.reveal .orange {
+  color: $module-color !important;
+  font-weight: 700 !important;
+}
+
+// Utility class for static green text
+.reveal .green {
+  color: $green-color !important;
+  font-weight: 700 !important;
+}
+
+// Utility class for green text (using the named color variable)
+.reveal .text-green {
+  color: $green-color !important;
+}
+
+// Utility class for blue text (using the named color variable)
+.reveal .text-blue {
+  color: $title-color !important;
+}
+
+// Utility class for orange text (using the named color variable, without forced bold)
+.reveal .text-orange {
+  color: $module-color !important;
+}
+
+// Utility class for red text
+.reveal .text-red {
+  color: #cc0000 !important;
+}
+
+// Color math terms: drift (orange) and diffusion (green)
+// Applied via JavaScript after MathJax renders
+// CSS backup - target underbrace structures
+.reveal .math-equation mjx-container[display="true"] mjx-munder:nth-of-type(1),
+.reveal .math-equation mjx-container[display="true"] mjx-underover:nth-of-type(1) {
+  color: $module-color !important;
+  fill: $module-color !important;
+  
+  * {
+    color: $module-color !important;
+    fill: $module-color !important;
+  }
+}
+
+.reveal .math-equation mjx-container[display="true"] mjx-munder:nth-of-type(2),
+.reveal .math-equation mjx-container[display="true"] mjx-underover:nth-of-type(2) {
+  color: $green-color !important;
+  fill: $green-color !important;
+  
+  * {
+    color: $green-color !important;
+    fill: $green-color !important;
+  }
+}
+
+
+/* ============================================================
+   REUSABLE UTILITY CLASSES FOR MATH SIZING
+   ============================================================ */
+
+// Utility class for smaller inline math - can be applied to any slide or element
+.reveal .small-math,
+.reveal .smaller-math {
+  // Inline math stays smaller
+  .MathJax:not(.MathJax_Display),
+  mjx-container:not([display="true"]),
+  mjx-math:not([display="true"]) {
+    font-size: 0.9em !important;
+  }
+  
+  section mjx-container:not([display="true"]) {
+    font-size: 0.9em !important;
+  }
+}
+
+// Utility class for normal-sized displayed math on compact slides
+// When .smaller-math is on the slide header, all displayed math on that slide gets proper sizing automatically
+.reveal section.smaller-math .MathJax_Display,
+.reveal section.smaller-math mjx-container[display="true"],
+.reveal section.smaller-math mjx-math[display="true"] {
+  font-size: 1.0em !important;
+}
+
+// Also support .small-math wrapper divs for backward compatibility
+.reveal section.smaller-math .small-math .MathJax_Display,
+.reveal section.smaller-math .small-math mjx-container[display="true"],
+.reveal section.smaller-math .small-math mjx-math[display="true"],
+.reveal .small-math .MathJax_Display,
+.reveal .small-math mjx-container[display="true"],
+.reveal .small-math mjx-math[display="true"] {
+  font-size: 1.0em !important;
+}
+
+// Highlight only when current fragment (reverts to normal after)
+.reveal .fragment.highlight-current-green.current-fragment {
+  color: $green-color !important;
+  font-weight: 700 !important;
+}
+
+// Make inline citation links gray
+.reveal .citation-gray,
+.reveal .citation-gray a,
+.reveal .citation-gray a:link,
+.reveal .citation-gray a:visited,
+.reveal .compact-slide a[href^="#ref-"],
+.reveal .compact-slide a[href^="#ref-"]:link,
+.reveal .compact-slide a[href^="#ref-"]:visited,
+.reveal .compact-slide a[href^="#ref-"],
+.reveal .compact-slide a[href^="#ref-"]:link,
+.reveal .compact-slide a[href^="#ref-"]:visited {
+  color: #808080 !important;
+}
+
+/* ============================================================
+   "ABOUT ME" SLIDE
+   ============================================================ */
+
+// Smaller text within about-text container on the about-me slide
+.reveal .about-me-slide .about-text {
+  font-size: 0.92em !important; // relative to 32px base
+}
+
+.reveal .about-me-slide .about-text p,
+.reveal .about-me-slide .about-text ul,
+.reveal .about-me-slide .about-text li {
+  font-size: 0.92em !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0.6em !important;
+}
+
+// First-level bullets spacing
+.reveal .about-me-slide .about-text > ul:first-of-type {
+  margin-top: 0.5em !important;
+}
+
+.reveal .about-me-slide .about-text > ul > li {
+  margin-bottom: 0.8em !important;
+}
+
+// Nested bullets spacing
+.reveal .about-me-slide .about-text ul ul li {
+  margin-bottom: 0.3em !important;
+  font-size: 1em !important;
+}
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+
+// Fix column layout in RevealJS
+.reveal .columns {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 1em !important;
+}
+
+// Utility for vertical centering
+.reveal .columns.v-center {
+  align-items: center !important;
+}
+
+.reveal .column {
+  flex-shrink: 0 !important;
+  text-align: left !important;
+  display: block !important;
+}
+
+// Ensure all content inside columns is left-aligned - very specific targeting
+.reveal .slides section .column,
+.reveal .slides section .columns .column,
+.reveal .column {
+  text-align: left !important;
+}
+
+.reveal .column *,
+.reveal .column > * {
+  text-align: left !important;
+}
+
+// Override any centering that might come from Reveal.js defaults
+.reveal .column p,
+.reveal .column span,
+.reveal .column div:not(.MathJax):not([class*="MathJax"]),
+.reveal .column strong {
+  text-align: left !important;
+}
+
+// Override center alignment even if slide or parent elements are centered
+.reveal .slides section.center .column,
+.reveal .slides section.center .columns .column,
+.reveal .slides section.center .column *,
+.reveal .column.center,
+.reveal .column.center * {
+  text-align: left !important;
+}
+
+// Custom image stack with Grid Layout
+// Works best when children are explicit blocks (e.g. divs)
+.reveal .img-stack {
+  display: grid !important;
+  grid-template-areas: "stack" !important;
+  align-items: flex-start !important; /* Aligns to top */
+  justify-items: center !important;
+  width: 100% !important;
+}
+
+// Force all direct children to occupy the same grid cell
+.reveal .img-stack > * {
+  grid-area: stack !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+// Make current-visible fragments replace each other properly
+.reveal .compact-slide .column > .fragment.current-visible,
+.reveal .compact-slide .column > .fragment.current-visible {
+  position: relative;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+// Hide fragments that are not the current visible one
+.reveal .compact-slide .column > .fragment.current-visible:not(.current-fragment),
+.reveal .compact-slide .column > .fragment.current-visible:not(.current-fragment) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+// Show only the current fragment
+.reveal .compact-slide .column > .fragment.current-visible.current-fragment,
+.reveal .compact-slide .column > .fragment.current-visible.current-fragment {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+// Remove any spacing from content inside fragments
+.reveal .compact-slide .column > .fragment > *:first-child,
+.reveal .compact-slide .column > .fragment > *:first-child {
+  margin-top: 0 !important;
+}
+
+.reveal .compact-slide .column > .fragment > *:last-child,
+.reveal .compact-slide .column > .fragment > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ============================================================
+   REUSABLE UTILITY CLASSES FOR MATH SIZING
+   ============================================================ */
+
+// Note: Math sizing for slides with .smaller-math is handled above
+// This section is for other utility classes if needed
+
+// Hide fragments that are not visible - be very aggressive
+.reveal .compact-slide .fragment-replace-container > .fragment:not(.visible),
+.reveal .compact-slide .fragment-replace-container > .fragment:not(.visible) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+// Show visible fragments - but ensure only one is visible at a time
+.reveal .compact-slide .fragment-replace-container > .fragment.visible,
+.reveal .compact-slide .fragment-replace-container > .fragment.visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  display: block !important;
+}
+
+// When fragment 2 is visible, force fragment 1 to be completely hidden
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible ~ .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible ~ .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"] * {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+// When second fragment is visible, ensure it's at the top and first is hidden
+.reveal .compact-slide .fragment-replace-container > .fragment:not(:first-child).visible,
+.reveal .compact-slide .fragment-replace-container > .fragment:not(:first-child).visible {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 10;
+}
+
+// Explicitly hide fragment 1 when fragment 2 is visible (more specific targeting)
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible,
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible {
+  z-index: 100;
+}
+
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="1"]:not(.current-fragment),
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="1"]:not(.current-fragment) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="1"]:not(.current-fragment) *,
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="1"]:not(.current-fragment) * {
+  display: none !important;
+}
+
+// When first fragment is visible, it should be relative to reserve space
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.visible,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.visible {
+  position: relative !important;
+  z-index: 1;
+}
+
+// Ensure when second fragment is visible, first is definitely hidden (including all children)
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible),
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible),
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  pointer-events: none !important;
+}
+
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) *,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden *,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) p,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden p,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) strong,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden strong,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) span,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden span,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) *,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden *,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) p,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden p,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) strong,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden strong,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child:not(.visible) span,
+.reveal .compact-slide .fragment-replace-container > .fragment:first-child.force-hidden span {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+// When fragment 2 is visible, absolutely hide fragment 1
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible ~ .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container > .fragment[data-fragment-index="2"].visible ~ .fragment[data-fragment-index="1"],
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  clip: rect(0, 0, 0, 0) !important;
+  pointer-events: none !important;
+}
+
+.reveal .compact-slide .fragment-replace-container:has(> .fragment[data-fragment-index="2"].visible) > .fragment[data-fragment-index="1"] * {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+// Ensure images fill their container
+.reveal .img-stack img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
+
+
+/* ============================================================
+   COMPACT SLIDE STYLE (BASELINE FOR MOST SLIDES)
+   Reduce font size for ALL text on slides that need more content
+   Can be applied to any slide that needs smaller text
+   Includes fragment transition support for figures/images
+   ============================================================ */
+
+/* Scale down the entire slide's body text */
+.reveal .slides section.compact-slide {
+  font-size: 0.75em !important;
+  line-height: 1.35 !important;
+}
+
+/* Paragraph text */
+.reveal .slides section.compact-slide p {
+  font-size: 0.75em !important;
+  line-height: 1.35 !important;
+}
+
+/* Bullet lists slightly larger for readability */
+.reveal .slides section.compact-slide ul,
+.reveal .slides section.compact-slide ol,
+.reveal .slides section.compact-slide li {
+  font-size: 0.85em !important;
+  line-height: 1.35 !important;
+}
+
+/* Prevent loose-list paragraphs from shrinking further */
+.reveal .slides section.compact-slide li p {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* Header on this slide slightly smaller than global h2 */
+.reveal .slides section.compact-slide h2 {
+  font-size: 0.9em !important;    // relative to the 40px we set for h2
+  line-height: 1.2 !important;
+}
+
+.about-link {
+  font-size: 0.95em;
+  color: #f2c14e !important;   // your accent color
+  text-decoration: none;
+}
+
+.about-link:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Callout notes - match font size with rest of slide */
+.reveal .slides section.compact-slide .callout-note,
+.reveal .slides section.compact-slide .callout-note p,
+.reveal .slides section.compact-slide .callout-tip,
+.reveal .slides section.compact-slide .callout-tip p,
+.reveal .slides section.compact-slide .callout-important,
+.reveal .slides section.compact-slide .callout-important p,
+.reveal .slides section.compact-slide .callout-warning,
+.reveal .slides section.compact-slide .callout-warning p,
+.reveal .slides section.compact-slide .callout-caution,
+.reveal .slides section.compact-slide .callout-caution p {
+  font-size: 0.85em !important;
+  line-height: 1.35 !important;
+}
+
+
+/* --- Numerical Solution slide: grey out past bullets --- */
+
+/* Smooth transition for this slide's fragments */
+.reveal section#numerical-solution .fragment {
+  transition: opacity 0.5s ease-in-out, color 0.5s ease-in-out !important;
+}
+
+/* All *shown* fragments are greyed out by default */
+.reveal section#numerical-solution .fragment.visible {
+  opacity: 0.4 !important;
+  color: #808080 !important;
+}
+
+/* The *current* fragment stays full-color and full-opacity */
+.reveal section#numerical-solution .fragment.current-fragment {
+  opacity: 1 !important;
+  color: inherit !important;
+}
+
+/* ============================================================
+   ANNOTATED EQUATIONS
+   For equations with labels and arrows (replacing TikZ)
+   ============================================================ */
+
+.reveal .equation-annotated {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 1.5em 0;
+  padding-bottom: 2.5em;
+  padding-right: 2em;
+}
+
+/* Container for all annotations */
+.reveal .eq-annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Annotation containers */
+.reveal .eq-annotation {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Weights annotation - positioned below and to the right of w^T */
+.reveal .eq-annotation-weights {
+  bottom: 0.3em;
+  left: 18%;
+  z-index: 10;
+}
+
+/* Bias annotation - positioned to the right of b */
+.reveal .eq-annotation-bias {
+  top: -0.2em;
+  right: 18%;
+  z-index: 10;
+}
+
+/* CSS arrows using pseudo-elements */
+.reveal .eq-arrow {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Weights arrow - curved arrow pointing down and right */
+.reveal .eq-arrow-weights {
+  bottom: 1.8em;
+  left: -20px;
+  width: 110px;
+  height: 55px;
+}
+
+.reveal .eq-arrow-weights::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 50px;
+  border-left: 2.5px dashed $title-color;
+  border-bottom: 2.5px dashed $title-color;
+  border-radius: 0 0 0 40px;
+}
+
+.reveal .eq-arrow-weights::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 95px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid $title-color;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transform: rotate(45deg);
+}
+
+/* Bias arrow - curved arrow pointing up and right */
+.reveal .eq-arrow-bias {
+  top: 0.3em;
+  right: -30px;
+  width: 100px;
+  height: 45px;
+}
+
+.reveal .eq-arrow-bias::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 40px;
+  border-right: 2.5px dashed $module-color;
+  border-top: 2.5px dashed $module-color;
+  border-radius: 0 30px 0 0;
+}
+
+.reveal .eq-arrow-bias::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: 85px;
+  width: 0;
+  height: 0;
+  border-right: 7px solid $module-color;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transform: rotate(-45deg);
+}
+
+/* Labels */
+.reveal .eq-label {
+  position: absolute;
+  font-weight: 700;
+  font-size: 0.85em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.reveal .eq-label-weights {
+  color: $title-color; /* #0072b2 - blue */
+  left: 80px;
+  top: 30px;
+}
+
+.reveal .eq-label-bias {
+  color: $module-color; /* #d55e00 - orange/red */
+  right: 0px;
+  top: 20px;
+}

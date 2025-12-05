@@ -1,0 +1,48 @@
+\begin{tikzpicture}[
+    font=\small,
+    table/.style={
+      matrix of nodes,
+      nodes in empty cells,
+      nodes={
+        minimum width=1.4cm,
+        minimum height=0.8cm,
+        align=center,
+        draw=black
+      },
+      row sep=-\pgflinewidth,
+      column sep=-\pgflinewidth
+    },
+    optcell/.style={
+      fill=green!30,
+      draw=black,
+      thick
+    }
+  ]
+  
+  % Matrix with actual values
+  \matrix (Vtable) [table] {
+            & $c=0$     & $c=1$     & $c=2$     \\
+  $M=0$     & 0.0       & -1.0      & -4.0      \\
+  $M=1$     & 1.5       & 2.0       & 1.0       \\
+  $M=2$     & 3.0       & 4.2       & 3.5       \\
+  $M=3$     & 4.0       & 5.5       & 6.2       \\
+  };
+  
+  % Highlight optimal actions
+  \begin{scope}[on background layer]
+    \node[optcell, fit=(Vtable-2-2)] {}; % M=0 -> c=0
+    \node[optcell, fit=(Vtable-3-3)] {}; % M=1 -> c=1
+    \node[optcell, fit=(Vtable-4-3)] {}; % M=2 -> c=1
+    \node[optcell, fit=(Vtable-5-4)] {}; % M=3 -> c=2
+  \end{scope}
+  
+  % Axis labels
+  \node[above=4pt of Vtable-1-2] {$\text{Action } c$};
+  \node[rotate=90, left=8pt of Vtable-3-1] {$\text{State } M$};
+  
+  % Legend
+  \node[optcell, minimum width=0.6cm, minimum height=0.4cm,
+        right=1.5cm of Vtable-3-4] (legbox) {};
+  \node[right=4pt of legbox] {$c^*(M)$ (optimal action)};
+  
+  \end{tikzpicture}

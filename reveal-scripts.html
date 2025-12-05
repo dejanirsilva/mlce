@@ -1,0 +1,224 @@
+<script>
+function greyOutPreviousFragments(slide) {
+  if (!slide || slide.dataset.greyPrevious !== 'true') return;
+  
+  const fragments = Array
+    .from(slide.querySelectorAll('.fragment[data-fragment-index]'))
+    .sort(
+      (a, b) =>
+        (Number(a.dataset.fragmentIndex) || 0) -
+        (Number(b.dataset.fragmentIndex) || 0)
+    );
+  
+  if (!fragments.length) return;
+  
+  fragments.forEach(frag => {
+    frag.style.transition = 'opacity 0.8s ease-in-out, color 0.8s ease-in-out';
+  });
+  
+  const visibleFragments = fragments.filter(frag =>
+    frag.classList.contains('visible') ||
+    frag.classList.contains('current-fragment')
+  );
+  const maxVisibleIndex = visibleFragments.length
+    ? Math.max(
+        ...visibleFragments.map(frag => Number(frag.dataset.fragmentIndex) || 0)
+      )
+    : -1;
+  
+  fragments.forEach(frag => {
+    const fragIndex = Number(frag.dataset.fragmentIndex) || 0;
+    if (fragIndex < maxVisibleIndex) {
+      frag.style.opacity = '0.4';
+      frag.style.color = '#808080';
+    } else {
+      frag.style.opacity = '1';
+      frag.style.color = '';
+    }
+  });
+}
+
+Reveal.addEventListener('slidechanged', function(event) {
+  setTimeout(() => greyOutPreviousFragments(event.currentSlide), 100);
+});
+
+Reveal.addEventListener('fragmentshown', function(event) {
+  const slide = event.fragment.closest('section');
+  setTimeout(() => greyOutPreviousFragments(slide), 50);
+});
+
+Reveal.addEventListener('fragmenthidden', function(event) {
+  const slide = event.fragment.closest('section');
+  setTimeout(() => greyOutPreviousFragments(slide), 50);
+});
+
+// Also check on initial load
+Reveal.addEventListener('ready', function(event) {
+  setTimeout(() => {
+    document
+      .querySelectorAll('section[data-grey-previous="true"]')
+      .forEach(slide => greyOutPreviousFragments(slide));
+  }, 100);
+});
+
+// Add line-by-line highlighting to code blocks
+function setupLineByLineHighlighting() {
+  const allPre = document.querySelectorAll('pre code');
+  allPre.forEach(code => {
+    const pre = code.parentElement;
+    if (pre && pre.tagName === 'PRE' && !pre.dataset.lineNumbersSetup) {
+      let lineNumbers = null;
+      
+      // Check for vf_iteration function
+      if (code.textContent.includes('function vf_iteration')) {
+        lineNumbers = '1|2|3|4|5|6|7|8|9|10|11|12|13|14|15';
+      }
+      // Check for tauchen function
+      else if (code.textContent.includes('function tauchen')) {
+        lineNumbers = '1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32';
+      }
+      
+      if (lineNumbers) {
+        // Set data-line-numbers attribute (Reveal.js should handle this)
+        pre.setAttribute('data-line-numbers', lineNumbers);
+        
+        // Add CSS for line highlighting (fallback if plugin doesn't work)
+        if (!document.getElementById('line-highlight-style')) {
+          const style = document.createElement('style');
+          style.id = 'line-highlight-style';
+          style.textContent = `
+            pre[data-line-numbers] code {
+              counter-reset: line;
+            }
+            pre[data-line-numbers] code .hljs-line::before {
+              counter-increment: line;
+              content: counter(line);
+              display: inline-block;
+              width: 2em;
+              padding-right: 1em;
+              color: #999;
+              text-align: right;
+            }
+            /* Highlight current line based on fragment */
+            pre[data-line-numbers] code .hljs-line.fragment.visible {
+              background-color: rgba(255, 255, 0, 0.2);
+            }
+          `;
+          document.head.appendChild(style);
+        }
+        
+        console.log('Set data-line-numbers attribute on code block');
+        pre.dataset.lineNumbersSetup = 'true';
+      }
+    }
+  });
+}
+
+// Try multiple times to catch the code when it's rendered
+function trySetupLineNumbers() {
+  setupLineByLineHighlighting();
+  setTimeout(setupLineByLineHighlighting, 200);
+  setTimeout(setupLineByLineHighlighting, 500);
+  setTimeout(setupLineByLineHighlighting, 1000);
+  setTimeout(setupLineByLineHighlighting, 2000);
+}
+
+Reveal.addEventListener('ready', function(event) {
+  console.log('Reveal.js ready, setting up line numbers');
+  trySetupLineNumbers();
+});
+
+Reveal.addEventListener('slidechanged', function(event) {
+  setTimeout(setupLineByLineHighlighting, 200);
+});
+
+// Also use MutationObserver to catch when code is added
+const observer = new MutationObserver(function(mutations) {
+  setupLineByLineHighlighting();
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+// Add footer with link back to homepage
+function addHomepageFooter() {
+  // Check if footer already exists
+  if (document.getElementById('homepage-footer')) return;
+  
+  // All slides are in Module subdirectories, so go up one level to reach index.html
+  const homePath = '../index.html';
+  
+  // Create footer element
+  const footer = document.createElement('div');
+  footer.id = 'homepage-footer';
+  footer.innerHTML = '<a href="' + homePath + '" title="Back to homepage">🏠</a>';
+  
+  // Add to reveal container
+  const revealContainer = document.querySelector('.reveal');
+  if (revealContainer) {
+    revealContainer.appendChild(footer);
+  }
+}
+
+// Add footer when Reveal is ready
+if (typeof Reveal !== 'undefined') {
+  Reveal.addEventListener('ready', function(event) {
+    addHomepageFooter();
+  });
+} else {
+  // Fallback: wait for Reveal to be available
+  window.addEventListener('load', function() {
+    if (typeof Reveal !== 'undefined') {
+      Reveal.addEventListener('ready', function(event) {
+        addHomepageFooter();
+      });
+      // Try immediately in case Reveal is already ready
+      setTimeout(addHomepageFooter, 100);
+    }
+  });
+}
+</script>
+
+<style>
+/* Footer with link back to homepage */
+.reveal #homepage-footer {
+  position: fixed;
+  bottom: 20px;
+  right: 70px;
+  z-index: 1000;
+  font-size: 0.5em;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.reveal #homepage-footer:hover {
+  opacity: 1;
+}
+
+.reveal #homepage-footer a {
+  color: #0072b2;
+  text-decoration: none;
+  padding: 3px 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  line-height: 1;
+}
+
+.reveal #homepage-footer a:hover {
+  background-color: #0072b2;
+  transform: scale(1.1);
+  text-decoration: none;
+}
+
+/* Hide footer on title slide if desired */
+.reveal #title-slide ~ #homepage-footer,
+.reveal section#title-slide ~ #homepage-footer {
+  display: none;
+}
+</style>
+

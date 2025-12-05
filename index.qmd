@@ -1,0 +1,165 @@
+---
+title: "Machine Learning for Computational Economics"
+format:
+  html:
+---
+
+**Instructor:** Dejanir Silva (Purdue University) [🌐](https://sites.google.com/site/dejanirhsilva/){.about-link}  
+**Institution:** EDHEC Business School
+
+<div style="margin-top: 1em;"></div>
+
+<div style="text-align: justify;">
+This course combines classical numerical methods in economics and finance with modern machine-learning approaches for solving and estimating dynamic models.
+
+Students learn to connect discrete- and continuous-time dynamic programming with neural-network approximations and gradient-based optimization.
+
+The course culminates with the <span class="text-orange">**Deep Policy Iteration (DPI)**</span> algorithm.
+Each module blends theory, implementation, and coding in Julia/Pluto.
+</div>
+
+## Quick links
+
+- 📝 **[Syllabus](syllabusEDHEC.pdf){target="_blank"}**
+- 📚 **[Lecture Notes (PDF)](Lecture_Notes_MLCE.pdf){target="_blank"}**
+- 🎓 **[Course Slides](#course-slides)**
+- 💻 **[Interactive Notebooks](#interactive-notebooks)**
+- 🧪 **[Replication Codes](#replication-codes)**
+
+## Syllabus
+
+For more details on the 2026 version of the course, you can view the syllabus
+[here](syllabusEDHEC.pdf){target="_blank"}.
+
+## Lecture Notes
+
+The main reference is the lecture notes developed for this course.  
+The notes go through the theory and implementation of the methods in detail and include
+many examples and guided implementations of the different methods in `Julia`.
+
+You can view the lecture notes in PDF format
+[here](Lecture_Notes_MLCE.pdf){target="_blank"}.
+
+## Course Slides
+
+The course is divided into the following modules:
+
+- [Module 1 – Introduction](Module01/Module01_Slides.html)
+- [Module 2 – Discrete-Time Methods](Module02/Module02_Slides.html)
+- [Module 3 – Continuous-Time Methods](Module03/Module03_Slides.html)
+- [Module 4 – Fundamentals of Machine Learning](Module04/Module04_Slides.html)
+- [Module 5 – The Deep Policy Iteration Method](Module05/Module05_Slides.html)
+
+## Interactive Notebooks
+
+For each module, there is an interactive Pluto notebook that illustrates the main concepts and methods.
+Here are static versions of the notebooks for the different modules:
+
+- [Module 2 – Three Challenges](notebooks/NB_ThreeChallenges.html)
+- [Module 3 – Black-Scholes](notebooks/NB_BlackScholes.html)
+- [Module 4 – Fitting DNN](notebooks/NB_FittingDNN.html)
+- [Module 5 – Two Trees](notebooks/NB_TwoTrees.html)
+
+## Replication Codes
+
+All replication codes for the course are available in the
+[GitHub repository](https://github.com/dejanirsilva/mlce).  
+The code is organized by module in the `src/` folder.
+
+A typical workflow to run a notebook interactively in Pluto is:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dejanirsilva/mlce.git
+   cd mlce
+   ```
+2. 	Launch Pluto from Julia and open the notebook, or run for example:
+   ```bash
+   pluto run src/Module02/NB_ThreeChallenges.jl
+   ```
+
+<style>
+/* Style links in main content to match slide blue color */
+main.content a,
+.quarto-title-block a {
+  color: #0072b2;
+  text-decoration: none;
+}
+
+main.content a:hover,
+.quarto-title-block a:hover {
+  color: #005a8f;
+  text-decoration: underline;
+}
+
+main.content a:visited,
+.quarto-title-block a:visited {
+  color: #0072b2;
+}
+</style>
+
+
+<!-- <style>
+/* Style links in main content to match slide blue color */
+main.content a,
+.quarto-title-block a {
+  color: #0072b2;
+  text-decoration: none;
+}
+
+main.content a:hover,
+.quarto-title-block a:hover {
+  color: #005a8f;
+  text-decoration: underline;
+}
+
+main.content a:visited,
+.quarto-title-block a:visited {
+  color: #0072b2;
+}
+</style>
+
+<script>
+// Fix sidebar collapse functionality
+(function() {
+  function fixSidebarCollapse() {
+    // Find all sidebar toggle buttons
+    const toggleButtons = document.querySelectorAll('.sidebar-item-toggle[data-bs-toggle="collapse"]');
+    
+    toggleButtons.forEach(function(button) {
+      // Find the parent sidebar item section
+      const sidebarItem = button.closest('.sidebar-item-section');
+      if (sidebarItem) {
+        // Find the collapse target (the ul element)
+        const collapseTarget = sidebarItem.querySelector('ul.collapse, ul:not(.collapse)');
+        if (collapseTarget && !collapseTarget.id) {
+          // Generate a unique ID if it doesn't have one
+          collapseTarget.id = 'collapse-' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        if (collapseTarget && collapseTarget.id) {
+          // Update the data-bs-target attribute on both the toggle button and the section link
+          const targetId = '#' + collapseTarget.id;
+          button.setAttribute('data-bs-target', targetId);
+          
+          // Also update the section link if it exists
+          const sectionLink = sidebarItem.querySelector('.sidebar-item-text[data-bs-toggle="collapse"]');
+          if (sectionLink) {
+            sectionLink.setAttribute('data-bs-target', targetId);
+          }
+        }
+      }
+    });
+  }
+  
+  // Run on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixSidebarCollapse);
+  } else {
+    fixSidebarCollapse();
+  }
+  
+  // Also run after a short delay to catch dynamically loaded content
+  setTimeout(fixSidebarCollapse, 100);
+})();
+</script> -->

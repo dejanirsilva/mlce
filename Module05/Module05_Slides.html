@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.26">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Dejanir Silva">
   <title>Machine Learning for Computational Economics</title>
@@ -994,7 +994,7 @@ d s_t = - 2 \sigma^2 s_t(1-s_t)\!\left(s_t - \tfrac12\right) dt
 <span id="cb3-8"><a></a></span>
 <span id="cb3-9"><a></a>m <span class="op">=</span> <span class="fu">TwoTrees</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div id="two_trees_struct" class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>TwoTrees(0.04, 0.2, 0.02, var"#TwoTrees##0#TwoTrees##1"{Float64}(0.2), var"#TwoTrees##2#TwoTrees##3"{Float64}(0.2))</code></pre>
+<pre><code>TwoTrees(0.04, 0.2, 0.02, var"#6#10"{Float64}(0.2), var"#7#11"{Float64}(0.2))</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -1205,16 +1205,16 @@ d s_t = - 2 \sigma^2 s_t(1-s_t)\!\left(s_t - \tfrac12\right) dt
 <span id="cb12-6"><a></a>m.<span class="fu">μₛ</span>(s_samples) <span class="co"># N x 1_000 matrix</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div id="orchard_instantiation" class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>10×1000 Matrix{Float64}:
-  0.000303074  -0.000118036   0.000236887  …   0.000322753  -0.000794737
-  4.76158e-5    0.000274476  -0.00105521       0.000372183  -0.000365942
-  5.12358e-5    0.000333352   0.000281074      0.000391832   3.69174e-5
-  0.000359253   0.000186538   0.000114176      0.000302585   0.00036271
-  0.000202499  -0.00140768    0.000179096      3.88067e-5    8.37865e-6
-  5.57673e-5    8.551e-5      2.58316e-5   …   0.000391674   0.000329996
- -0.0017992     0.000192015   0.00014079       0.000118054   0.00015365
-  0.000193727   0.00017442    0.000108349     -0.00234177    1.38748e-5
-  0.000290492  -3.75101e-5   -7.02588e-6       0.000186464   0.00018209
-  0.00029554    0.000316914  -2.39636e-5       0.000217417   7.30628e-5</code></pre>
+  4.24309e-5    0.000237275   0.000815818  …   8.57681e-5   -0.00169363
+ -0.000259516   0.000134325   0.000132953      0.000550971   0.000463926
+  0.000193812   0.000154873   0.000418759      0.000564647   5.89399e-5
+  0.000118302   0.00023403   -0.00379805       2.65856e-5    0.000710309
+  0.000187861   0.000109689   0.000126233      0.000119859  -0.00071501
+ -2.52101e-6    4.92026e-5    0.000566168  …   0.00054645    0.000122228
+  0.000199586   4.887e-6      7.50461e-5       0.000573028   0.000189173
+  2.76043e-5   -0.000877846   0.000535931      0.000335935   0.00040788
+ -0.000704084  -9.64787e-5    0.000686905     -0.00331773    0.000103212
+  0.000196524   5.00425e-5    0.000440236      0.00051449    0.000352971</code></pre>
 </div>
 </div>
 </div>
