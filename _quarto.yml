@@ -1,9 +1,9 @@
 project:
   type: website
-  output-dir: "."
   render:
     - "*.qmd"
     - "!tests/**"
+  post-render: python3 _deploy.py
 
 website:
   title: "Machine Learning for Computational Economics"
