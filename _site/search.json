@@ -70,7 +70,7 @@
     "href": "index.html#replication-codes",
     "title": "Machine Learning for Computational Economics",
     "section": "Replication Codes",
-    "text": "Replication Codes\nAll replication codes for the course are available in the GitHub repository.\nThe code is organized by module in the src/ folder.\nA typical workflow to run a notebook interactively in Pluto is:\n\nClone the repository:\ngit clone https://github.com/dejanirsilva/mlce.git\ncd mlce\nLaunch Pluto from Julia and open the notebook, or run for example:\n\npluto run src/Module02/NB_ThreeChallenges.jl",
+    "text": "Replication Codes\nAll replication codes for the course are available in the GitHub repository.\nThe code is organized by module in the src/ folder.",
     "crumbs": [
       "Home",
       "Machine Learning for Computational Economics"

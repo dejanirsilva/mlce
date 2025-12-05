@@ -2,6 +2,7 @@
 title: "Machine Learning for Computational Economics"
 format:
   html:
+    include-after-body: sidebar-fix.html
 ---
 
 **Instructor:** Dejanir Silva (Purdue University) [🌐](https://sites.google.com/site/dejanirhsilva/){.about-link}  
@@ -66,6 +67,7 @@ All replication codes for the course are available in the
 [GitHub repository](https://github.com/dejanirsilva/mlce).  
 The code is organized by module in the `src/` folder.
 
+<!-- 
 A typical workflow to run a notebook interactively in Pluto is:
 
 1. Clone the repository:
@@ -76,7 +78,7 @@ A typical workflow to run a notebook interactively in Pluto is:
 2. 	Launch Pluto from Julia and open the notebook, or run for example:
    ```bash
    pluto run src/Module02/NB_ThreeChallenges.jl
-   ```
+   ``` -->
 
 <style>
 /* Style links in main content to match slide blue color */
