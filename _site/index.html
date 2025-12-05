@@ -451,51 +451,6 @@ main.content a:visited,
 </section>
 
 </main> <!-- /main -->
-<script>
-// Fix sidebar collapse functionality for all pages
-(function() {
-  function fixSidebarCollapse() {
-    // Find all sidebar toggle buttons
-    const toggleButtons = document.querySelectorAll('.sidebar-item-toggle[data-bs-toggle="collapse"]');
-    
-    toggleButtons.forEach(function(button) {
-      // Find the parent sidebar item section
-      const sidebarItem = button.closest('.sidebar-item-section');
-      if (sidebarItem) {
-        // Find the collapse target (the ul element)
-        const collapseTarget = sidebarItem.querySelector('ul.collapse, ul:not(.collapse)');
-        if (collapseTarget && !collapseTarget.id) {
-          // Generate a unique ID if it doesn't have one
-          collapseTarget.id = 'collapse-' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        if (collapseTarget && collapseTarget.id) {
-          // Update the data-bs-target attribute on both the toggle button and the section link
-          const targetId = '#' + collapseTarget.id;
-          button.setAttribute('data-bs-target', targetId);
-          
-          // Also update the section link if it exists
-          const sectionLink = sidebarItem.querySelector('.sidebar-item-text[data-bs-toggle="collapse"]');
-          if (sectionLink) {
-            sectionLink.setAttribute('data-bs-target', targetId);
-          }
-        }
-      }
-    });
-  }
-  
-  // Run on DOMContentLoaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixSidebarCollapse);
-  } else {
-    fixSidebarCollapse();
-  }
-  
-  // Also run after a short delay to catch dynamically loaded content
-  setTimeout(fixSidebarCollapse, 100);
-})();
-</script>
-
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

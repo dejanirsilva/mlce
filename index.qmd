@@ -1,8 +1,7 @@
 ---
 title: "Machine Learning for Computational Economics"
 format:
-  html:
-    include-after-body: sidebar-fix.html
+  html
 ---
 
 **Instructor:** Dejanir Silva (Purdue University) [🌐](https://sites.google.com/site/dejanirhsilva/){.about-link}  
