@@ -1516,7 +1516,7 @@ v(\mathbf{s}_0) =
 \]</span></p>
 <p>The first-order condition for the optimal investment rate is <span class="math display">\[
   \frac{\partial \operatorname{HJB}}{\partial i}
-  = -\big(1 + \lambda\,\mathbf{1}_{D^*(k,z,i)&lt;0}\big)\big[1 + \chi(i-\delta)\big]k
+  = -\big(1 + \lambda\,\mathbf{1}_{D^*(k,z,i)&lt;0}\big)\big[1 + \chi i \big]k
     + v_k(\mathbf{s})k = 0.
 \]</span></p>
 <div class="fragment">
@@ -1528,38 +1528,339 @@ v(\mathbf{s}_0) =
 <li>In this case, capital is constant</li>
 <li>From the HJB equation, we obtain the value function</li>
 </ul>
-<p><span class="math display">\[\begin{equation}\label{eq:hw_value_function_special_case}
+<p><span class="math display">\[
   v(k, z) = \frac{D(k, z, \delta)}{\rho} =
   \begin{cases}
     \frac{e^{z} k^\alpha - \delta k}{\rho}, &amp; \text{if } k \leq k_{\max}(z), \\[5pt]
     \frac{e^{z} k^\alpha - \delta k}{\rho} (1+\lambda), &amp; \text{if } k &gt; k_{\max}(z),
   \end{cases}
-\end{equation}\]</span> where <span class="math inline">\(k_{\max}(z) = \left(\tfrac{e^{z}}{\delta}\right)^{\!\frac{1}{1-\alpha}}\)</span>.</p>
+\]</span> where <span class="math inline">\(k_{\max}(z) = \left(\tfrac{e^{z}}{\delta}\right)^{\!\frac{1}{1-\alpha}}\)</span>.</p>
 </div>
 </section>
-<section id="value-function-and-derivatives-for-special-case" class="slide level2 compact-slide">
-<h2>Value function and derivatives for special case</h2>
+<section id="model-struct-and-loss-function" class="slide level2 compact-slide">
+<h2>Model struct and loss function</h2>
+<p>We start by defining the model struct.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a></a><span class="pp">@kwdef</span> <span class="kw">struct</span> HennessyWhited</span>
+<span id="cb18-2"><a></a>    α<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.55</span></span>
+<span id="cb18-3"><a></a>    θ<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.26</span></span>
+<span id="cb18-4"><a></a>    z̅<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb18-5"><a></a>    σz<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.123</span></span>
+<span id="cb18-6"><a></a>    δ<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb18-7"><a></a>    χ<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb18-8"><a></a>    λ<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fl">0.059</span></span>
+<span id="cb18-9"><a></a>    ρ<span class="op">::</span><span class="dt">Float64 </span><span class="op">=</span> <span class="fu">-log</span>(<span class="fl">0.96</span>)</span>
+<span id="cb18-10"><a></a>    μₛ<span class="op">::</span><span class="dt">Function </span><span class="op">=</span> (s,i) <span class="op">-&gt;</span> <span class="fu">vcat</span>((i <span class="op">.-</span> δ) <span class="op">.*</span> s[<span class="fl">1</span>,<span class="op">:</span>]<span class="ch">', -θ .* (s[2,:] .- z̅)'</span>)</span>
+<span id="cb18-11"><a></a>    σₛ<span class="op">::</span><span class="dt">Function </span><span class="op">=</span> (s,i) <span class="op">-&gt;</span> <span class="fu">vcat</span>(<span class="fu">zeros</span>(<span class="fl">1</span>,<span class="fu">size</span>(s,<span class="fl">2</span>)), <span class="fu">σz*ones</span>(<span class="fl">1</span>,<span class="fu">size</span>(s,<span class="fl">2</span>)))</span>
+<span id="cb18-12"><a></a><span class="kw">end</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="margin-top: 1.5em;">
+
+</div>
+<div class="fragment">
+<p>The HJB is particularly simple in this case.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a></a><span class="kw">function</span> <span class="fu">hjb_special_case</span>(m, s, θᵥ)</span>
+<span id="cb19-2"><a></a>    (; α, λ, ρ, δ) <span class="op">=</span> m</span>
+<span id="cb19-3"><a></a>    k, z  <span class="op">=</span> s[<span class="fl">1</span>,<span class="op">:</span>]<span class="ch">', s[2,:]'</span></span>
+<span id="cb19-4"><a></a>    D_star     <span class="op">=</span> <span class="fu">exp</span>.(z) <span class="op">.*</span> k<span class="op">.^</span>α <span class="op">-</span> δ <span class="op">*</span> k</span>
+<span id="cb19-5"><a></a>    D     <span class="op">=</span> D_star <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.+</span> λ <span class="op">*</span> (D_star <span class="op">.&lt;</span> <span class="fl">0</span>))</span>
+<span id="cb19-6"><a></a>    hjb   <span class="op">=</span> D <span class="op">-</span> ρ <span class="op">*</span> <span class="fu">v_net</span>(s, θᵥ)</span>
+<span id="cb19-7"><a></a>    <span class="cf">return</span> hjb</span>
+<span id="cb19-8"><a></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="margin-top: 1.5em;">
+
+</div>
+</div>
+<div class="fragment">
+<p>Given the HJB residual, we can define the loss function.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a></a><span class="kw">function</span> <span class="fu">loss_v_special_case</span>(m, s, θᵥ)</span>
+<span id="cb20-2"><a></a>    hjb <span class="op">=</span> <span class="fu">hjb_special_case</span>(m, s, θᵥ)</span>
+<span id="cb20-3"><a></a>    <span class="cf">return</span> <span class="fu">mean</span>(abs2, hjb)</span>
+<span id="cb20-4"><a></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="network-architecture-and-training" class="slide level2 compact-slide">
+<h2>Network architecture and training</h2>
+<p>We use a simple feedforward network with two hidden layers.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a></a>v_core <span class="op">=</span> <span class="fu">Chain</span>(</span>
+<span id="cb21-2"><a></a>    <span class="fu">Dense</span>(<span class="fl">2</span>, <span class="fl">32</span>, Lux.swish),</span>
+<span id="cb21-3"><a></a>    <span class="fu">Dense</span>(<span class="fl">32</span>, <span class="fl">24</span>, Lux.swish),</span>
+<span id="cb21-4"><a></a>    <span class="fu">Dense</span>(<span class="fl">24</span>, <span class="fl">1</span>)</span>
+<span id="cb21-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>To enforce the boundary condition, we multiply the network by a function of <span class="math inline">\(k\)</span> that vanishes at zero.</p>
+<ul>
+<li>A convenient choice is <span class="math inline">\(g(k) = k^\alpha\)</span>.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a></a><span class="fu">v_net</span>(s, θᵥ) <span class="op">=</span> (s[<span class="fl">1</span>,<span class="op">:</span>]<span class="op">.^</span>m.α)<span class="ch">' .* v_core(s, θᵥ, stᵥ)[1]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>We initialize the parameters, optimizer, and training parameters.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a></a><span class="co"># Initialize the parameters and optimizer</span></span>
+<span id="cb23-2"><a></a>rng                  <span class="op">=</span> <span class="fu">Xoshiro</span>(<span class="fl">1234</span>)</span>
+<span id="cb23-3"><a></a>θᵥ, stᵥ              <span class="op">=</span> Lux.<span class="fu">setup</span>(rng, v_core) <span class="op">|&gt;</span> Lux.f64</span>
+<span id="cb23-4"><a></a>optᵥ                 <span class="op">=</span> Optimisers.<span class="fu">Adam</span>(<span class="fl">1e-3</span>)</span>
+<span id="cb23-5"><a></a>osᵥ                  <span class="op">=</span> Optimisers.<span class="fu">setup</span>(optᵥ, θᵥ)</span>
+<span id="cb23-6"><a></a></span>
+<span id="cb23-7"><a></a><span class="co"># Training parameters</span></span>
+<span id="cb23-8"><a></a>max_iter             <span class="op">=</span> <span class="fl">300_000</span></span>
+<span id="cb23-9"><a></a>dk                   <span class="op">=</span> <span class="fu">Uniform</span>(<span class="fl">0.0</span>, <span class="fl">10.0</span>)</span>
+<span id="cb23-10"><a></a>dz                   <span class="op">=</span> <span class="fu">Normal</span>(m.z̅, <span class="fl">0.10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="training-history-and-value-function-for-special-case" class="slide level2 compact-slide">
+<h2>Training history and value function for special case</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a></a>loss_history_special_case <span class="op">=</span> <span class="dt">Float64</span>[];</span>
+<span id="cb24-2"><a></a><span class="cf">for</span> it <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>max_iter</span>
+<span id="cb24-3"><a></a>    s_batch      <span class="op">=</span> <span class="fu">vcat</span>(<span class="fu">rand</span>(rng, dk, <span class="fl">150</span>)<span class="ch">', rand(rng, dz, 150)'</span>)</span>
+<span id="cb24-4"><a></a>    lossᵥ, backᵥ <span class="op">=</span> Zygote.<span class="fu">pullback</span>(p <span class="op">-&gt;</span> <span class="fu">loss_v_special_case</span>(m, s_batch, p), θᵥ)</span>
+<span id="cb24-5"><a></a>    gradᵥ        <span class="op">=</span> <span class="fu">first</span>(<span class="fu">backᵥ</span>(<span class="fl">1.0</span>))</span>
+<span id="cb24-6"><a></a>    osᵥ, θᵥ      <span class="op">=</span> Optimisers.<span class="fu">update</span>(osᵥ, θᵥ, gradᵥ)</span>
+<span id="cb24-7"><a></a>    <span class="fu">push!</span>(loss_history_special_case, lossᵥ)</span>
+<span id="cb24-8"><a></a>    <span class="cf">if</span> lossᵥ <span class="op">&lt;</span> <span class="fl">1e-6</span></span>
+<span id="cb24-9"><a></a>        <span class="fu">println</span>(<span class="st">"Iteration "</span>, it, <span class="st">"| Loss_v = "</span>, lossᵥ)</span>
+<span id="cb24-10"><a></a>        <span class="cf">break</span></span>
+<span id="cb24-11"><a></a>    <span class="cf">end</span></span>
+<span id="cb24-12"><a></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
 <div class="columns">
 <div class="column" style="width:48%;">
 <div style="display: flex; flex-direction: column;">
-<p><img data-src="Figures/hw_special_case_v_level.png" style="width:97.0%"></p>
+<p><img data-src="Figures/hw_special_case_loss.png" style="width:97.0%"></p>
 <div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
-<p><span style="font-weight: bold; color: #666666;">Value function</span></p>
+<p><span style="font-weight: bold; color: #666666;">Loss history</span></p>
 </div>
 </div>
 </div><div class="column" style="width:4%;">
 
 </div><div class="column" style="width:48%;">
 <div style="display: flex; flex-direction: column;">
-<p><img data-src="Figures/hw_special_case_v_derivatives.png" style="width:100.0%"></p>
+<p><img data-src="Figures/hw_special_case_v.png" style="width:100.0%"></p>
 <div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
-<p><span style="font-weight: bold; color: #666666;">Value function derivative</span></p>
+<p><span style="font-weight: bold; color: #666666;">Value function</span></p>
 </div>
 </div>
 </div></div>
+</div>
+</section>
+<section id="a-q-theory-of-investment" class="slide level2 compact-slide">
+<h2>A Q-theory of investment</h2>
+<p>Consider the case where there are no equity issuance costs, i.e., <span class="math inline">\(\lambda = 0\)</span>.</p>
+<ul>
+<li>In this case, the investment rate is given by the q-theory of investment: <span class="math inline">\(i(k,z) = \frac{v_k(k,z) - 1}{\chi}\)</span>.</li>
+<li>We will solve for the optimal investment without using the first-order condition explicitly.</li>
+</ul>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>In addition to a neural network for the value function, we will also use a neural network for the optimal investment policy.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a></a>i_core <span class="op">=</span> <span class="fu">Chain</span>(</span>
+<span id="cb25-2"><a></a>    <span class="fu">Dense</span>(<span class="fl">2</span>, <span class="fl">32</span>, Lux.swish),</span>
+<span id="cb25-3"><a></a>    <span class="fu">Dense</span>(<span class="fl">32</span>, <span class="fl">24</span>, Lux.swish),</span>
+<span id="cb25-4"><a></a>    <span class="fu">Dense</span>(<span class="fl">24</span>, <span class="fl">1</span>)</span>
+<span id="cb25-5"><a></a>)</span>
+<span id="cb25-6"><a></a><span class="fu">i_net</span>(s, θᵢ) <span class="op">=</span> <span class="fu">i_core</span>(s, θᵢ, stᵢ)[<span class="fl">1</span>]</span>
+<span id="cb25-7"><a></a></span>
+<span id="cb25-8"><a></a><span class="co"># Initialize the parameters and optimizer</span></span>
+<span id="cb25-9"><a></a>rng                  <span class="op">=</span> <span class="fu">Xoshiro</span>(<span class="fl">1234</span>)</span>
+<span id="cb25-10"><a></a>θᵢ, stᵢ              <span class="op">=</span> Lux.<span class="fu">setup</span>(rng, i_core) <span class="op">|&gt;</span> Lux.f64</span>
+<span id="cb25-11"><a></a>optᵢ                 <span class="op">=</span> Optimisers.<span class="fu">Adam</span>(<span class="fl">1e-3</span>)</span>
+<span id="cb25-12"><a></a>osᵢ                  <span class="op">=</span> Optimisers.<span class="fu">setup</span>(optᵢ, θᵢ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="implementing-the-implicit-version-of-policy-evaluation" class="slide level2 compact-slide">
+<h2>Implementing the implicit version of policy evaluation</h2>
+<p>We will use the implicit version of policy evaluation:</p>
+<p><span class="math display">\[
+  \mathbf{\theta}_V^{j} = \mathbf{\theta}_V^{j-1} - \eta_V \frac{1}{I}\sum_{i=1}^I HJB(\mathbf{s}_i, \mathbf{\theta}_C^{j}, \mathbf{\theta}_V^{j-1}) \nabla_{\mathbf{\theta}_V} HJB(\mathbf{s}_i, \mathbf{\theta}_C^{j}, \mathbf{\theta}_V^{j-1}),
+\]</span></p>
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>The term <span class="math inline">\(\nabla_{\mathbf{\theta}_V} HJB(\mathbf{s}_i, \mathbf{\theta}_C^{j}, \mathbf{\theta}_V^{j-1})\)</span> depends on the gradient and Hessian of the value function.</p>
+<ul>
+<li><p>Hence, this requires computing a <span class="text-orange"><strong>third-order derivative</strong></span> of the value function.</p></li>
+<li><p>This type of <span class="text-blue"><strong>mixed-mode</strong></span> automatic differentiation is not supported by many AD systems.</p></li>
+</ul>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>To overcome this challenge, we will use the hyper-dual approach to Itô’s lemma.</p>
+<ul>
+<li><p>This requires computing a second derivative of a univariate function.</p>
+<ul>
+<li>With automatic differentiation, we would face the mixed-mode limitation.</li>
+</ul></li>
+<li><p>We will compute this second derivative using <span class="text-green"><strong>finite-differences</strong></span>.</p>
+<ul>
+<li>This way, Zygote never interacts with dual numbers, and can differentiate the HJB residuals without difficulty.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="the-hjb-residuals" class="slide level2 compact-slide">
+<h2>The HJB residuals</h2>
+<p>First, we define a function that computes the second derivative of the value function using finite-differences.</p>
+<ul>
+<li>We consider the usual three-point stencil, but also include higher-order stencils as options.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a></a><span class="kw">function</span> <span class="fu">second_derivative_FD</span>(F<span class="op">::</span><span class="dt">Function</span>, h<span class="op">::</span><span class="dt">Float64</span>; stencil<span class="op">::</span><span class="dt">Symbol </span><span class="op">=</span> <span class="op">:</span>three)</span>
+<span id="cb26-2"><a></a>    <span class="cf">if</span> stencil <span class="op">==</span> <span class="op">:</span>nine</span>
+<span id="cb26-3"><a></a>        <span class="cf">return</span> (<span class="op">-</span><span class="fl">9.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">4</span>h) <span class="op">.+</span> <span class="fl">128.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">3</span>h) <span class="op">.-</span> <span class="fl">1008.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">2</span>h) <span class="op">.+</span> <span class="fl">8064.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span>h) <span class="op">.-</span> <span class="fl">14350.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">0.0</span>) <span class="op">.+</span> <span class="fl">8064.0</span> <span class="op">.*</span> <span class="fu">F</span>(h) <span class="op">.-</span> <span class="fl">1008.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">2</span>h) <span class="op">.+</span> <span class="fl">128.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">3</span>h) <span class="op">.-</span> <span class="fl">9.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">4</span>h)) <span class="op">./</span> (<span class="fl">5040.0</span> <span class="op">*</span> h<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb26-4"><a></a>    <span class="cf">elseif</span> stencil <span class="op">==</span> <span class="op">:</span>seven</span>
+<span id="cb26-5"><a></a>        <span class="cf">return</span> (<span class="fl">2.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">3</span>h) <span class="op">.-</span> <span class="fl">27.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">2</span>h) <span class="op">.+</span> <span class="fl">270.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span>h) <span class="op">.-</span> <span class="fl">490.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">0.0</span>) <span class="op">.+</span> <span class="fl">270.0</span> <span class="op">.*</span> <span class="fu">F</span>(h) <span class="op">.-</span> <span class="fl">27.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">2</span>h) <span class="op">.+</span> <span class="fl">2.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">3</span>h)) <span class="op">./</span> (<span class="fl">180.0</span> <span class="op">*</span> h<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb26-6"><a></a>    <span class="cf">elseif</span> stencil <span class="op">==</span> <span class="op">:</span>five</span>
+<span id="cb26-7"><a></a>        <span class="cf">return</span> (<span class="fu">-F</span>(<span class="fl">2</span>h) <span class="op">.+</span> <span class="fl">16.0</span> <span class="op">.*</span> <span class="fu">F</span>(h) <span class="op">.-</span> <span class="fl">30.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="fl">0.0</span>) <span class="op">.+</span> <span class="fl">16.0</span> <span class="op">.*</span> <span class="fu">F</span>(<span class="op">-</span>h) <span class="op">.-</span> <span class="fu">F</span>(<span class="op">-</span><span class="fl">2</span>h)) <span class="op">./</span> (<span class="fl">12.0</span> <span class="op">*</span> h<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb26-8"><a></a>    <span class="cf">else</span> </span>
+<span id="cb26-9"><a></a>        <span class="cf">return</span> (<span class="fu">F</span>(h) <span class="op">-</span> <span class="fl">2.0</span> <span class="op">*</span> <span class="fu">F</span>(<span class="fl">0.0</span>) <span class="op">+</span> <span class="fu">F</span>(<span class="op">-</span>h)) <span class="op">/</span> (h<span class="op">*</span>h) <span class="co"># Three point stencil</span></span>
+<span id="cb26-10"><a></a>    <span class="cf">end</span></span>
+<span id="cb26-11"><a></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>Given this function, we can define the HJB residual.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="hw_training" data-code-line-numbers="1-15|1-6|7-12|13-14"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="hw_training-1"><a href="#hw_training-1"></a><span class="kw">function</span> <span class="fu">hjb_residual</span>(m, s, θᵥ, θᵢ; h <span class="op">=</span> <span class="fl">5e-2</span>, stencil<span class="op">::</span><span class="dt">Symbol </span><span class="op">=</span> <span class="op">:</span>three)</span>
+<span id="hw_training-2"><a href="#hw_training-2"></a>    (; α, λ, ρ, δ, χ) <span class="op">=</span> m</span>
+<span id="hw_training-3"><a href="#hw_training-3"></a>    k, z   <span class="op">=</span> s[<span class="fl">1</span>,<span class="op">:</span>]<span class="ch">', s[2,:]'</span></span>
+<span id="hw_training-4"><a href="#hw_training-4"></a>    i      <span class="op">=</span> <span class="fu">i_net</span>(s, θᵢ)</span>
+<span id="hw_training-5"><a href="#hw_training-5"></a>    D_star <span class="op">=</span> <span class="fu">exp</span>.(z) <span class="op">.*</span> k<span class="op">.^</span>α <span class="op">-</span> (i <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span>χ<span class="op">*</span>i<span class="op">.^</span><span class="fl">2</span>)<span class="op">.*</span>k</span>
+<span id="hw_training-6"><a href="#hw_training-6"></a>    D      <span class="op">=</span> D_star <span class="op">.*</span> (<span class="fl">1</span> <span class="op">.+</span> λ <span class="op">*</span> (D_star <span class="op">.&lt;</span> <span class="fl">0</span>))</span>
+<span id="hw_training-7"><a href="#hw_training-7"></a>    μk     <span class="op">=</span> (i <span class="op">.-</span> δ) <span class="op">.*</span> k</span>
+<span id="hw_training-8"><a href="#hw_training-8"></a>    μz     <span class="op">=</span> <span class="op">-</span>θ <span class="op">.*</span> (z <span class="op">.-</span> z̅)</span>
+<span id="hw_training-9"><a href="#hw_training-9"></a>    μₛ     <span class="op">=</span> <span class="fu">vcat</span>(μk, μz)</span>
+<span id="hw_training-10"><a href="#hw_training-10"></a>    σₛ     <span class="op">=</span> <span class="fu">vcat</span>(<span class="fu">zeros</span>(<span class="fl">1</span>, <span class="fu">size</span>(s,<span class="fl">2</span>)), <span class="fu">σz*ones</span>(<span class="fl">1</span>, <span class="fu">size</span>(s,<span class="fl">2</span>)))</span>
+<span id="hw_training-11"><a href="#hw_training-11"></a>    <span class="fu">F</span>(ϵ)   <span class="op">=</span> <span class="fu">v_net</span>(s <span class="op">.+</span> σₛ <span class="op">.*</span> (ϵ <span class="op">/</span> <span class="fu">sqrt</span>(<span class="fl">2.0</span>)) <span class="op">.+</span> μₛ <span class="op">*</span> (ϵ<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> <span class="fl">2.0</span>), θᵥ)</span>
+<span id="hw_training-12"><a href="#hw_training-12"></a>    drift  <span class="op">=</span> <span class="fu">second_derivative_FD</span>(F, h, stencil <span class="op">=</span> stencil)</span>
+<span id="hw_training-13"><a href="#hw_training-13"></a>    hjb    <span class="op">=</span> D <span class="op">+</span> drift <span class="op">-</span> m.ρ <span class="op">*</span> <span class="fu">v_net</span>(s, θᵥ)</span>
+<span id="hw_training-14"><a href="#hw_training-14"></a>    <span class="cf">return</span> hjb</span>
+<span id="hw_training-15"><a href="#hw_training-15"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="loss-functions-and-training-parameters" class="slide level2 compact-slide">
+<h2>Loss functions and training parameters</h2>
+<p>First, we define the loss functions for the value function</p>
+<ul>
+<li>In this formulation, we minimize directly the mean squared HJB residuals.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a></a><span class="kw">function</span> <span class="fu">loss_v</span>(m, s, θᵥ, θᵢ; h <span class="op">=</span> <span class="fl">5e-2</span>, stencil<span class="op">::</span><span class="dt">Symbol </span><span class="op">=</span> <span class="op">:</span>nine)</span>
+<span id="cb27-2"><a></a>    hjb <span class="op">=</span> <span class="fu">hjb_residual</span>(m, s, θᵥ, θᵢ; h <span class="op">=</span> h, stencil <span class="op">=</span> stencil)</span>
+<span id="cb27-3"><a></a>    <span class="cf">return</span> <span class="fu">mean</span>(abs2, hjb)</span>
+<span id="cb27-4"><a></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>Next, we define the loss function for the optimal investment policy.</p>
+<ul>
+<li>The loss corresponds to minus the mean HJB residuals, as we want to maximize the right-hand side of the HJB equation.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb28-1"><a></a><span class="kw">function</span> <span class="fu">loss_i</span>(m, s, θᵥ, θᵢ; h <span class="op">=</span> <span class="fl">5e-2</span>, stencil<span class="op">::</span><span class="dt">Symbol </span><span class="op">=</span> <span class="op">:</span>nine)</span>
+<span id="cb28-2"><a></a>    hjb <span class="op">=</span> <span class="fu">hjb_residual</span>(m, s, θᵥ, θᵢ; h <span class="op">=</span> h, stencil <span class="op">=</span> stencil)</span>
+<span id="cb28-3"><a></a>    <span class="cf">return</span> <span class="fu">-mean</span>(hjb)</span>
+<span id="cb28-4"><a></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<div style="margin-top: 1.5em;">
+
+</div>
+<p>Finally, we define the training parameters.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb29-1"><a></a>max_iter             <span class="op">=</span> <span class="fl">300_000</span></span>
+<span id="cb29-2"><a></a>kmin, kmax           <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">8.0</span></span>
+<span id="cb29-3"><a></a>dk                   <span class="op">=</span> <span class="fu">Uniform</span>(kmin, kmax)</span>
+<span id="cb29-4"><a></a>dz                   <span class="op">=</span> <span class="fu">Normal</span>(m.z̅, m.σz<span class="op">/</span><span class="fu">sqrt</span>(<span class="fl">2.0</span><span class="op">*</span>m.θ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="training-loop" class="slide level2 compact-slide">
+<h2>Training loop</h2>
+<p>We can now define the training loop.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="hw_training_loop" data-code-line-numbers="1-28|1-3|5-12|13-18|19-23|24-27"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="hw_training_loop-1"><a href="#hw_training_loop-1"></a>loss_history_v <span class="op">=</span> <span class="dt">Float64</span>[];</span>
+<span id="hw_training_loop-2"><a href="#hw_training_loop-2"></a>loss_history_i <span class="op">=</span> <span class="dt">Float64</span>[];</span>
+<span id="hw_training_loop-3"><a href="#hw_training_loop-3"></a>nsteps_v, nsteps_i <span class="op">=</span> <span class="fl">10</span>, <span class="fl">1</span></span>
+<span id="hw_training_loop-4"><a href="#hw_training_loop-4"></a><span class="cf">for</span> it <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>max_iter</span>
+<span id="hw_training_loop-5"><a href="#hw_training_loop-5"></a>    s_batch <span class="op">=</span> <span class="fu">vcat</span>(<span class="fu">rand</span>(rng, dk, <span class="fl">150</span>)<span class="ch">', rand(rng, dz, 150)'</span>)</span>
+<span id="hw_training_loop-6"><a href="#hw_training_loop-6"></a>    lossᵥ, lossᵢ <span class="op">=</span> <span class="fu">zero</span>(<span class="dt">Float64</span>), <span class="fu">zero</span>(<span class="dt">Float64</span>)</span>
+<span id="hw_training_loop-7"><a href="#hw_training_loop-7"></a>    <span class="co"># Policy evaluation step</span></span>
+<span id="hw_training_loop-8"><a href="#hw_training_loop-8"></a>    <span class="cf">for</span> _ <span class="op">=</span> <span class="fl">1</span><span class="op">:</span>nsteps_v</span>
+<span id="hw_training_loop-9"><a href="#hw_training_loop-9"></a>        lossᵥ, backᵥ <span class="op">=</span> Zygote.<span class="fu">pullback</span>(p <span class="op">-&gt;</span> <span class="fu">loss_v</span>(m, s_batch, p, θᵢ), θᵥ)</span>
+<span id="hw_training_loop-10"><a href="#hw_training_loop-10"></a>        gradᵥ        <span class="op">=</span> <span class="fu">first</span>(<span class="fu">backᵥ</span>(<span class="fl">1.0</span>))</span>
+<span id="hw_training_loop-11"><a href="#hw_training_loop-11"></a>        osᵥ, θᵥ      <span class="op">=</span> Optimisers.<span class="fu">update</span>(osᵥ, θᵥ, gradᵥ)</span>
+<span id="hw_training_loop-12"><a href="#hw_training_loop-12"></a>    <span class="cf">end</span></span>
+<span id="hw_training_loop-13"><a href="#hw_training_loop-13"></a>    <span class="co"># Policy improvement step</span></span>
+<span id="hw_training_loop-14"><a href="#hw_training_loop-14"></a>    <span class="cf">for</span> _ <span class="op">=</span> <span class="fl">1</span><span class="op">:</span>nsteps_i</span>
+<span id="hw_training_loop-15"><a href="#hw_training_loop-15"></a>        lossᵢ, backᵢ <span class="op">=</span> Zygote.<span class="fu">pullback</span>(p <span class="op">-&gt;</span> <span class="fu">loss_i</span>(m, s_batch, θᵥ, p), θᵢ)</span>
+<span id="hw_training_loop-16"><a href="#hw_training_loop-16"></a>        gradᵢ        <span class="op">=</span> <span class="fu">first</span>(<span class="fu">backᵢ</span>(<span class="fl">1.0</span>))</span>
+<span id="hw_training_loop-17"><a href="#hw_training_loop-17"></a>        osᵢ, θᵢ      <span class="op">=</span> Optimisers.<span class="fu">update</span>(osᵢ, θᵢ, gradᵢ)</span>
+<span id="hw_training_loop-18"><a href="#hw_training_loop-18"></a>    <span class="cf">end</span></span>
+<span id="hw_training_loop-19"><a href="#hw_training_loop-19"></a>    <span class="co"># Compute loss</span></span>
+<span id="hw_training_loop-20"><a href="#hw_training_loop-20"></a>    lossᵥ <span class="op">=</span> <span class="fu">loss_v</span>(m, s_batch, θᵥ, θᵢ)</span>
+<span id="hw_training_loop-21"><a href="#hw_training_loop-21"></a>    lossᵢ <span class="op">=</span> <span class="fu">loss_i</span>(m, s_batch, θᵥ, θᵢ)</span>
+<span id="hw_training_loop-22"><a href="#hw_training_loop-22"></a>    <span class="fu">push!</span>(loss_history_v, lossᵥ)</span>
+<span id="hw_training_loop-23"><a href="#hw_training_loop-23"></a>    <span class="fu">push!</span>(loss_history_i, lossᵢ)</span>
+<span id="hw_training_loop-24"><a href="#hw_training_loop-24"></a>    <span class="cf">if</span> <span class="fu">max</span>(lossᵥ, <span class="fu">abs</span>(lossᵢ)) <span class="op">&lt;</span> <span class="fl">1e-6</span></span>
+<span id="hw_training_loop-25"><a href="#hw_training_loop-25"></a>        <span class="fu">println</span>(<span class="st">"Iteration "</span>, it, <span class="st">"| Loss_v = "</span>, lossᵥ, <span class="st">"| Loss_i = "</span>, lossᵢ)</span>
+<span id="hw_training_loop-26"><a href="#hw_training_loop-26"></a>        <span class="cf">break</span></span>
+<span id="hw_training_loop-27"><a href="#hw_training_loop-27"></a>    <span class="cf">end</span></span>
+<span id="hw_training_loop-28"><a href="#hw_training_loop-28"></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="training-history-and-value-function" class="slide level2 compact-slide">
+<h2>Training history and value function</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div style="display: flex; flex-direction: column;">
+<p><img data-src="Figures/hw_loss_v_i.png" style="width:97.0%"></p>
+<div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
+<p><span style="font-weight: bold; color: #666666;">Loss history</span></p>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<div style="display: flex; flex-direction: column;">
+<p><img data-src="Figures/hw_i.png" style="width:100.0%"></p>
+<div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
+<p><span style="font-weight: bold; color: #666666;">Value function</span></p>
+</div>
+</div>
+</div></div>
+<!-- ## Value function and derivatives for special case {.compact-slide}
+
+:::: {.columns}
+
+::: {.column width="48%"}
+<div style="display: flex; flex-direction: column;">
+![](Figures/hw_special_case_v_level.png){width="97%"}
+
+<div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
+<span style="font-weight: bold; color: #666666;">Value function</span>
+</div>
+</div>
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+<div style="display: flex; flex-direction: column;">
+![](Figures/hw_special_case_v_derivatives.png){width="100%"}
+
+<div style="font-size: 0.85em; margin-top: 0.5em; display: flex; justify-content: center;">
+<span style="font-weight: bold; color: #666666;">Value function derivative</span>
+</div>
+</div>
+:::
+
+:::: -->
 </section>
 <section id="optimal-dividend-policy-and-investment-rate" class="slide level2 compact-slide">
 <h2>Optimal Dividend Policy and Investment Rate</h2>
+<p>We consider next the optimal dividend policy and investment rate for the full model with <span class="math inline">\(\lambda &gt; 0\)</span>.</p>
+<ul>
+<li>We compare the results with the finite-difference solution.</li>
+</ul>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div style="display: flex; flex-direction: column;">
