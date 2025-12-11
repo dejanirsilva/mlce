@@ -1,4 +1,3 @@
-@ -1,97 +0,0 @@
 # Machine Learning for Computational Economics (MLCE)
 
 This repository hosts the **public course website**, lecture notes, slides, replication code, and Pluto notebooks for the course:
