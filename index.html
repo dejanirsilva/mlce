@@ -310,37 +310,65 @@ ul.task-list li input[type="checkbox"] {
 <div style="text-align: justify;">
 <p>This course combines classical numerical methods in economics and finance with modern machine-learning approaches for solving and estimating dynamic models.</p>
 <p>Students learn to connect discrete- and continuous-time dynamic programming with neural-network approximations and gradient-based optimization.</p>
-<p>The course culminates with the <span class="text-orange"><strong>Deep Policy Iteration (DPI)</strong></span> algorithm and higher-order extensions for high-dimensional diffusion models. Each module blends theory, implementation, and coding in Julia/Pluto.</p>
+<p>The course culminates with the <span class="text-orange"><strong>Deep Policy Iteration (DPI)</strong></span> algorithm. Each module blends theory, implementation, and coding in Julia/Pluto.</p>
 </div>
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">Quick links</h2>
+<ul>
+<li>📝 <strong><a href="syllabusEDHEC.pdf" target="_blank">Syllabus</a></strong></li>
+<li>📚 <strong><a href="Lecture_Notes_MLCE.pdf" target="_blank">Lecture Notes (PDF)</a></strong></li>
+<li>🎓 <strong><a href="#course-slides">Course Slides</a></strong></li>
+<li>💻 <strong><a href="#interactive-notebooks">Interactive Notebooks</a></strong></li>
+<li>🧪 <strong><a href="#replication-codes">Replication Codes</a></strong></li>
+</ul>
+</section>
 <section id="syllabus" class="level2">
 <h2 class="anchored" data-anchor-id="syllabus">Syllabus</h2>
 <p>For more details on the 2026 version of the course, you can view the syllabus <a href="syllabusEDHEC.pdf" target="_blank">here</a>.</p>
 </section>
 <section id="lecture-notes" class="level2">
 <h2 class="anchored" data-anchor-id="lecture-notes">Lecture Notes</h2>
-<p>The main reference are the lecture notes developed for this course. The notes go through the theory and implementation of the methods in detail. It includes a lot of examples and guided implementations of the different methods in Julia.</p>
+<p>The main reference is the lecture notes developed for this course.<br>
+The notes go through the theory and implementation of the methods in detail and include many examples and guided implementations of the different methods in <code>Julia</code>.</p>
 <p>You can view the lecture notes in PDF format <a href="Lecture_Notes_MLCE.pdf" target="_blank">here</a>.</p>
 </section>
 <section id="course-slides" class="level2">
 <h2 class="anchored" data-anchor-id="course-slides">Course Slides</h2>
 <p>The course is divided into the following modules:</p>
 <ul>
-<li><a href="./Module01/Module01_Slides.html">Module 1 – Introduction</a></li>
-<li><a href="./Module02/Module02_Slides.html">Module 2 – Discrete-Time Methods</a></li>
-<li><a href="./Module03/Module03_Slides.html">Module 3 – Continuous-Time Methods</a></li>
-<li><a href="./Module04/Module04_Slides.html">Module 4 – Fundamentals of Machine Learning</a></li>
-<li><a href="./Module05/Module05_Slides.html">Module 5 – The Deep Policy Iteration Method</a></li>
+<li><a href="Module01/Module01_Slides.html">Module 1 – Introduction</a></li>
+<li><a href="Module02/Module02_Slides.html">Module 2 – Discrete-Time Methods</a></li>
+<li><a href="Module03/Module03_Slides.html">Module 3 – Continuous-Time Methods</a></li>
+<li><a href="Module04/Module04_Slides.html">Module 4 – Fundamentals of Machine Learning</a></li>
+<li><a href="Module05/Module05_Slides.html">Module 5 – The Deep Policy Iteration Method</a></li>
 </ul>
 </section>
 <section id="interactive-notebooks" class="level2">
 <h2 class="anchored" data-anchor-id="interactive-notebooks">Interactive Notebooks</h2>
-<p>Interactive Pluto notebooks with code examples and exercises:</p>
+<p>For each module, there is an interactive Pluto notebook that illustrates the main concepts and methods. Here are static versions of the notebooks for the different modules:</p>
 <ul>
 <li><a href="notebooks/NB_ThreeChallenges.html">Module 2 – Three Challenges</a></li>
 <li><a href="notebooks/NB_BlackScholes.html">Module 3 – Black-Scholes</a></li>
 <li><a href="notebooks/NB_FittingDNN.html">Module 4 – Fitting DNN</a></li>
 <li><a href="notebooks/NB_TwoTrees.html">Module 5 – Two Trees</a></li>
 </ul>
+</section>
+<section id="replication-codes" class="level2">
+<h2 class="anchored" data-anchor-id="replication-codes">Replication Codes</h2>
+<p>All replication codes for the course are available in the <a href="https://github.com/dejanirsilva/mlce">GitHub repository</a>.<br>
+The code is organized by module in the <code>src/</code> folder.</p>
+<!-- 
+A typical workflow to run a notebook interactively in Pluto is:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dejanirsilva/mlce.git
+   cd mlce
+   ```
+2.  Launch Pluto from Julia and open the notebook, or run for example:
+   ```bash
+   pluto run src/Module02/NB_ThreeChallenges.jl
+   ``` -->
 <style>
 /* Style links in main content to match slide blue color */
 main.content a,
@@ -360,6 +388,26 @@ main.content a:visited,
   color: #0072b2;
 }
 </style>
+<!-- <style>
+/* Style links in main content to match slide blue color */
+main.content a,
+.quarto-title-block a {
+  color: #0072b2;
+  text-decoration: none;
+}
+
+main.content a:hover,
+.quarto-title-block a:hover {
+  color: #005a8f;
+  text-decoration: underline;
+}
+
+main.content a:visited,
+.quarto-title-block a:visited {
+  color: #0072b2;
+}
+</style>
+
 <script>
 // Fix sidebar collapse functionality
 (function() {
@@ -403,57 +451,12 @@ main.content a:visited,
   // Also run after a short delay to catch dynamically loaded content
   setTimeout(fixSidebarCollapse, 100);
 })();
-</script>
+</script> -->
 
 
 </section>
 
 </main> <!-- /main -->
-<script>
-// Fix sidebar collapse functionality for all pages
-(function() {
-  function fixSidebarCollapse() {
-    // Find all sidebar toggle buttons
-    const toggleButtons = document.querySelectorAll('.sidebar-item-toggle[data-bs-toggle="collapse"]');
-    
-    toggleButtons.forEach(function(button) {
-      // Find the parent sidebar item section
-      const sidebarItem = button.closest('.sidebar-item-section');
-      if (sidebarItem) {
-        // Find the collapse target (the ul element)
-        const collapseTarget = sidebarItem.querySelector('ul.collapse, ul:not(.collapse)');
-        if (collapseTarget && !collapseTarget.id) {
-          // Generate a unique ID if it doesn't have one
-          collapseTarget.id = 'collapse-' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        if (collapseTarget && collapseTarget.id) {
-          // Update the data-bs-target attribute on both the toggle button and the section link
-          const targetId = '#' + collapseTarget.id;
-          button.setAttribute('data-bs-target', targetId);
-          
-          // Also update the section link if it exists
-          const sectionLink = sidebarItem.querySelector('.sidebar-item-text[data-bs-toggle="collapse"]');
-          if (sectionLink) {
-            sectionLink.setAttribute('data-bs-target', targetId);
-          }
-        }
-      }
-    });
-  }
-  
-  // Run on DOMContentLoaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixSidebarCollapse);
-  } else {
-    fixSidebarCollapse();
-  }
-  
-  // Also run after a short delay to catch dynamically loaded content
-  setTimeout(fixSidebarCollapse, 100);
-})();
-</script>
-
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
